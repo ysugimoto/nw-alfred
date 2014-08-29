@@ -12,7 +12,7 @@ SearchManager.getInstance = function() {
     var element;
 
     if ( ! _searchManager ) {
-        element = document.querySelector('launcher-list');
+        element = document.querySelector('.launcher-list');
         _searchManager = new SearchManager(element);
     }
 

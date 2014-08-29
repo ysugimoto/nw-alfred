@@ -1,5 +1,6 @@
-var gui = require('nw.gui');
-var fs  = require('fs');
+var gui  = require('nw.gui');
+var fs   = require('fs');
+var child = require('child_process');
 var _instance;
 
 function ApplicationManager() {
@@ -12,7 +13,7 @@ function ApplicationManager() {
     this.win       = null;
     this.shortcut  = null;
     this.settings  = {};
-    this.worker    = null;
+    this.search    = null;
 
     _instance = this;
 }
@@ -24,6 +25,9 @@ ApplicationManager.prototype.run = function() {
     this.initTray();
     this.initShortcut();
     this.findIndex();
+
+    this.search = InputManager.getInstance();
+
 };
 
 ApplicationManager.prototype.initTray = function() {
@@ -36,6 +40,7 @@ ApplicationManager.prototype.initTray = function() {
         this.win.show();
     }.bind(this));
 };
+
 ApplicationManager.prototype.initShortcut = function() {
     this.shortcut = new gui.Shortcut({
         key: 'Ctrl+Period'
@@ -46,6 +51,7 @@ ApplicationManager.prototype.initShortcut = function() {
         this.win.toggleShow();
     }.bind(this));
 };
+
 ApplicationManager.prototype.initSettings = function() {
     // Do you have .alfredrc?
     var rcFile   = process.env.HOME + '/.alfredrc';
@@ -60,14 +66,17 @@ ApplicationManager.prototype.initSettings = function() {
     }
 
     this.settings = settings;
+    fs.writeFileSync('./data/setting.json', JSON.stringify(settings), {encoding: 'utf8'});
 };
 ApplicationManager.prototype.findIndex = function() {
-    console.log('Index search');
-    this.worker = new Worker('asset/js/worker.js');
+    var proc = child.spawn('node', ['./asset/js/proc.js'], {cwd: process.cwd()});
 
-    this.worker.onmessage = function(msg) {
-        console.log(msg);
-    };
+    proc.on('exit', function(code) {
+        if ( code === 0 ) {
+            var indexes = fs.readFileSync('./data/indexes.json', {encoding: 'utf8'});
 
-    this.worker.postMessage(JSON.stringify({operation: 'index', paths: this.settings.path}));
+            SearchManager.getInstance().setDict(JSON.stringify(indexes));
+            new Notification('Index finished');
+        }
+    });
 };

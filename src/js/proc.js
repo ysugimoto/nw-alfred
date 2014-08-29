@@ -1,21 +1,14 @@
 var fs       = require('fs');
 var path     = require('path');
 var fileList = {};
+var settings = JSON.parse(fs.readFileSync('./data/setting.json', {encoding: 'utf8'}));
 
-onmessage = function(message) {
-    var json = JSON.parse(message);
+settings.path.forEach(function(p) {
+    find(p, true);
+});
 
-    switch ( json.operation ) {
-        case 'index':
-            fileList = {};
-            json.paths.forEach(function(p) {
-                find(p, true);
-            });
-            localStorage.setItem('indexes', JSON.stringify(fileList));
-            postMessage('done.index');
-            break;
-    }
-};
+fs.writeFileSync('./data/indexes.json', JSON.stringify(fileList), {encoding: 'utf8'});
+process.exit(0);
 
 function find(detectPath, isApp) {
     if ( ! fs.existsSync(detectPath) ) {

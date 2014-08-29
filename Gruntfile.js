@@ -56,9 +56,10 @@ module.exports = function(grunt) {
         copy: {
             dist: {
                 files: [
-                    {src: 'src/js/worker.js', dest: 'asset/js/worker.js'},
+                    {src: 'src/js/proc.js',   dest: 'asset/js/proc.js'},
                     {src: 'index.html',       dest: '<%= nw_path %>Contents/Resources/app.nw/index.html'},
                     {src: 'package.json',     dest: '<%= nw_path %>Contents/Resources/app.nw/package.json'},
+                    {src: 'data',             dest: '<%= nw_path %>Contents/Resources/app.nw/'},
                     {src: 'asset/*',          dest: '<%= nw_path %>Contents/Resources/app.nw/', expand: true},
                     {src: 'asset/js/*',       dest: '<%= nw_path %>Contents/Resources/app.nw/', expand: true},
                     {src: 'asset/css/*',      dest: '<%= nw_path %>Contents/Resources/app.nw/', expand: true},
@@ -84,5 +85,6 @@ module.exports = function(grunt) {
         exec(path + 'Contents/MacOS/node-webkit');
     });
 
-    grunt.registerTask('default', ['stylus', 'cssmin', 'sprockets', 'uglify', 'copy']);
+    grunt.registerTask('build', ['stylus', 'cssmin', 'sprockets', 'uglify', 'copy']);
+    grunt.registerTask('default', ['build', 'run']);
 };

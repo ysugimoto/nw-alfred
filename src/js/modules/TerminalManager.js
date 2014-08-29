@@ -9,7 +9,7 @@ TerminalManager.getInstance = function() {
     var element;
 
     if ( ! _terminalManager ) {
-        element = document.querySelector('launcher-list');
+        element = document.querySelector('.terminal');
         _terminalManager = new TerminalManager(element);
     }
 

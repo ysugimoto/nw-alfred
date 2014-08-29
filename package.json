@@ -17,7 +17,7 @@
     "height": 114,
     "resizable": true,
     "scrollable": false,
-    "always-on-top": true,
+    "always-on-top": false,
     "show_in_taskbar": true
   },
   "devDependencies": {
